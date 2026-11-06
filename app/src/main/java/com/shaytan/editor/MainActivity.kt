@@ -5,9 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +28,21 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ShaitanEditor() {
+    var showTransitions by remember { mutableStateOf(false) }
+
+    if (showTransitions) {
+        TransitionsScreen(
+            onBack = { showTransitions = false }
+        )
+    } else {
+        HomeScreen(
+            onOpenTransitions = { showTransitions = true }
+        )
+    }
+}
+
+@Composable
+fun HomeScreen(onOpenTransitions: () -> Unit) {
     val background = Color(0xFF080808)
     val card = Color(0xFF191919)
     val gold = Color(0xFFD6AD45)
@@ -35,6 +52,7 @@ fun ShaitanEditor() {
             modifier = Modifier
                 .fillMaxSize()
                 .background(background)
+                .verticalScroll(rememberScrollState())
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -84,13 +102,24 @@ fun ShaitanEditor() {
 
             EditorButton("📁  مشاريعي", card, Color.White)
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(15.dp))
+
+            EditorButton(
+                "✨  الانتقالات والإضاءة",
+                card,
+                gold,
+                onClick = onOpenTransitions
+            )
+
+            Spacer(modifier = Modifier.height(35.dp))
 
             Text(
                 text = "صُنع بإبداع • SHAYTAN EDITOR",
                 color = Color.Gray,
                 fontSize = 11.sp
             )
+
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
@@ -99,9 +128,11 @@ fun ShaitanEditor() {
 fun EditorButton(
     title: String,
     cardColor: Color,
-    textColor: Color
+    textColor: Color,
+    onClick: () -> Unit = {}
 ) {
     Surface(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp),
